@@ -1,0 +1,17 @@
+{
+    "name": "fannypack/fcm-xmpp",
+    "description": "laravel package for fcm",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mpande Andrew",
+            "email": "andrewmvp007@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "FannyPack\\FcmXmpp\\": "src/"
+        }
+    },
+    "require": {}
+}
