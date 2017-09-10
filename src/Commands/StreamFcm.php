@@ -1,11 +1,11 @@
 <?php
 
-namespace FannyPack\FcmXmpp\Commands;
+namespace FannyPack\Fcm\Xmpp\Commands;
 
-use FannyPack\FcmXmpp\Xmpp\XmppServer;
+use FannyPack\Fcm\Xmpp\FcmXmppClient;
 use Illuminate\Console\Command;
 
-class StreamFcmXmpp extends Command
+class StreamFcm extends Command
 {
     /**
      * The name and signature of the console command.
@@ -21,14 +21,16 @@ class StreamFcmXmpp extends Command
      */
     protected $description = 'Stream the Firebase Cloud Messaging (FCM) server through XMPP protocol for incoming messages';
 
+    /**
+     * @var FcmXmppClient
+     */
     protected $server;
 
     /**
      * Create a new command instance.
-     *
-     * @param XmppServer $server
+     * @param FcmXmppClient $server
      */
-    public function __construct(XmppServer $server)
+    public function __construct(FcmXmppClient $server)
     {
         parent::__construct();
 
@@ -42,8 +44,8 @@ class StreamFcmXmpp extends Command
      */
     public function handle()
     {
-        $this->info("Connecting to Firebase Cloud Messaging (FCM) server");
+        $this->line("<info>Streaming FCM XMPP Connection server</info>");
         $this->server->connect();
-        $this->info("Connected to Firebase Cloud Messaging (FCM) server");
+        return;
     }
 }
