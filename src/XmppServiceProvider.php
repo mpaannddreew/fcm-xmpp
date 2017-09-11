@@ -60,13 +60,13 @@ class XmppServiceProvider extends ServiceProvider
             return new ConnectionPool($app);
         });
 
-        $this->app->singleton(FcmXmppClient::class, function($app){
-            return new FcmXmppClient($app);
+        $this->app->singleton(XmppClient::class, function($app){
+            return new XmppClient($app);
         });
     }
 
     public function provides()
     {
-        return [FcmXmppClient::class];
+        return [XmppClient::class];
     }
 }

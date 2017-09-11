@@ -2,7 +2,7 @@
 
 namespace FannyPack\Fcm\Xmpp\Commands;
 
-use FannyPack\Fcm\Xmpp\FcmXmppClient;
+use FannyPack\Fcm\Xmpp\XmppClient;
 use Illuminate\Console\Command;
 
 class StreamFcm extends Command
@@ -22,15 +22,15 @@ class StreamFcm extends Command
     protected $description = 'Stream the Firebase Cloud Messaging (FCM) server through XMPP protocol for incoming messages';
 
     /**
-     * @var FcmXmppClient
+     * @var XmppClient
      */
     protected $server;
 
     /**
      * Create a new command instance.
-     * @param FcmXmppClient $server
+     * @param XmppClient $server
      */
-    public function __construct(FcmXmppClient $server)
+    public function __construct(XmppClient $server)
     {
         parent::__construct();
 

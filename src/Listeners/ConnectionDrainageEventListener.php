@@ -3,17 +3,20 @@
 namespace FannyPack\Fcm\Xmpp\Listeners;
 
 use FannyPack\Fcm\Xmpp\Events\ConnectionDrainageEvent;
-use FannyPack\Fcm\Xmpp\FcmXmppClient;
+use FannyPack\Fcm\Xmpp\XmppClient;
 
 class ConnectionDrainageEventListener
 {
+    /**
+     * @var XmppClient
+     */
     protected $client;
 
     /**
      * Create the event listener.
-     * @param FcmXmppClient $client
+     * @param XmppClient $client
      */
-    public function __construct(FcmXmppClient $client)
+    public function __construct(XmppClient $client)
     {
         $this->client = $client;
     }

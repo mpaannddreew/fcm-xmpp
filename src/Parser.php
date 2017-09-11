@@ -9,9 +9,9 @@
 namespace FannyPack\Fcm\Xmpp;
 
 
-use App\Events\FannyPack\Fcm\Xmpp\Events\MessageReceivedEvent;
 use DOMElement;
 use FannyPack\Fcm\Xmpp\Events\ConnectionDrainageEvent;
+use FannyPack\Fcm\Xmpp\Events\MessageReceivedEvent;
 use FannyPack\Utils\Fcm\Messages\AckMessage;
 use FannyPack\Utils\Fcm\Messages\Payload;
 use FannyPack\Utils\Fcm\Packet;

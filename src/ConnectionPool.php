@@ -48,11 +48,10 @@ class ConnectionPool
      */
     public function add(ConnectionInterface $connection)
     {
-        $data = '<stream:stream to="' . Config::HOST_DOMAIN . '" version="1.0" xmlns="jabber:client" xmlns:stream="http://etherx.jabber.org/streams">';
-        $connection->write($data);
+        $connection->write('<stream:stream to="' . Config::HOST_DOMAIN . '" version="1.0" xmlns="jabber:client" xmlns:stream="http://etherx.jabber.org/streams">');
 
         $this->initEvents($connection);
-        $this->storage->attach($connection);
+        $this->storage->attach($connection, ['position' => $this->storage->count() + 1]);
     }
 
     /**
@@ -62,10 +61,10 @@ class ConnectionPool
      */
     protected function initEvents(ConnectionInterface $connection)
     {
-        $connection->on('data', function ($chunk) use ($connection) {
+        $connection->on('data', function ($data) use ($connection) {
             Log::info("===reading===");
-            Log::info($chunk);
-            $this->parser->parseData($chunk, $connection);
+            Log::info($data);
+            $this->parser->parseData($data, $connection);
         });
 
         $connection->on('close', function() use ($connection){

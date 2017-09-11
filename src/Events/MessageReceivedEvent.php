@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Events\FannyPack\Fcm\Xmpp\Events;
+namespace FannyPack\Fcm\Xmpp\Events;
 
 
 class MessageReceivedEvent

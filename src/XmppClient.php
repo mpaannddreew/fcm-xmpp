@@ -20,7 +20,7 @@ use React\Socket\ConnectionInterface;
 use Illuminate\Contracts\Foundation\Application;
 
 
-class FcmXmppClient
+class XmppClient
 {
     /**
      * @var Application

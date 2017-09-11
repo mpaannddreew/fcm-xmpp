@@ -13,8 +13,19 @@ use SplObjectStorage;
 
 class ConnectionStorage extends SplObjectStorage
 {
+    /**
+     * return latest connection in storage
+     *
+     * @return null|object
+     */
     public function getViableConnection()
     {
-        // todo retrieve the newest connection from storage
+        foreach ($this as $connection){
+            if ($this->getInfo()['position'] == $this->count())
+            {
+                return $connection;
+            }
+        }
+        return null;
     }
 }
