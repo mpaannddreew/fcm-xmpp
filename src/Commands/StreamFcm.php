@@ -24,17 +24,17 @@ class StreamFcm extends Command
     /**
      * @var XmppClient
      */
-    protected $server;
+    protected $client;
 
     /**
      * Create a new command instance.
-     * @param XmppClient $server
+     * @param XmppClient $client
      */
-    public function __construct(XmppClient $server)
+    public function __construct(XmppClient $client)
     {
         parent::__construct();
 
-        $this->server = $server;
+        $this->client = $client;
     }
 
     /**
@@ -45,7 +45,7 @@ class StreamFcm extends Command
     public function handle()
     {
         $this->line("<info>Streaming FCM XMPP Connection server</info>");
-        $this->server->connect();
+        $this->client->connect();
         return;
     }
 }

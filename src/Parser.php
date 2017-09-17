@@ -10,8 +10,11 @@ namespace FannyPack\Fcm\Xmpp;
 
 
 use DOMElement;
-use FannyPack\Fcm\Xmpp\Events\ConnectionDrainageEvent;
-use FannyPack\Fcm\Xmpp\Events\MessageReceivedEvent;
+use FannyPack\Utils\Fcm\Events\ConnectionDrainageEvent;
+use FannyPack\Utils\Fcm\Events\MessageAcknowledgementEvent;
+use FannyPack\Utils\Fcm\Events\MessageReceivedEvent;
+use FannyPack\Utils\Fcm\Events\RegistrationErrorEvent;
+use FannyPack\Utils\Fcm\Events\RegistrationExpiryEvent;
 use FannyPack\Utils\Fcm\Messages\AckMessage;
 use FannyPack\Utils\Fcm\Messages\Payload;
 use FannyPack\Utils\Fcm\Packet;
@@ -74,7 +77,11 @@ class Parser
                 $this->parseSuccess();
             }
             elseif ($node->localName == 'failure') {} // todo failure response
-            elseif ($node->localName == 'iq' && $node->getAttribute('type') == 'result'){} // todo
+            elseif ($node->localName == 'iq' && $node->getAttribute('type') == 'result'){
+                Log::info("connected");
+                $jid = $node->firstChild->firstChild->textContent;
+                Log::info($jid);
+            }
             elseif ($node->localName == 'message') {
                 $this->parseMessage($node);
             }
@@ -140,33 +147,42 @@ class Parser
             }
         }elseif ($node->firstChild->localName == 'gcm' && ($json = $node->firstChild->textContent) && ($data = json_decode($json)) && @$data->message_type && @$data->message_id) {
             if ($data->message_type == 'ack') {
-                // todo message acknowledgement received
-                Log::info("===ack===");
-                Log::info("ACK message //$data->message_id");
+                // message acknowledgement received
+                $this->events->fire(new MessageAcknowledgementEvent($data->message_id));
             } elseif ($data->message_type == 'nack') {
                 Log::info("===nack===");
                 Log::info("$data->error ($data->error_description) $data->from");
                 if ($data->error == 'BAD_REGISTRATION' || $data->error == 'DEVICE_UNREGISTERED')
-                {}// todo @call_user_func($this->onExpire, $data->from, null);
+                {
+                    // unregistered/uninstalled app
+                    $this->events->fire(new RegistrationErrorEvent($data->from));
+                }
                 else
                 {}// todo @call_user_func($this->onFail, $data->message_id, $data->error, $data->error_description);
             }
 
             if ($data->message_type == 'control' && $data->control_type == 'CONNECTION_DRAINING') {
+                // connection server connection drainage
                 $this->events->fire(new ConnectionDrainageEvent($data));
             }
 
             if (@$data->registration_id) {
-                // todo @call_user_func($this->onExpire, $data->from, $data->registration_id);
-                Log::warning("CANONICAL ID $data->from -> $data->registration_id");
+                // registration expired for token
+                $this->events->fire(new RegistrationExpiryEvent($data->from, $data->registration_id));
             }
         } elseif (($json = $node->firstChild->textContent) && ($mData = json_decode($json)) && ($client_token = $mData->from) && ($client_message = $mData->data)) {
             // ack for receipt before processing message
-            $packet = (new Packet())->setPipeline(Packet::XMPP_PIPELINE)->setPayload(new Payload())->setTo($client_token);
-            $ack_message = new AckMessage($packet, $mData->message_id);
-            $this->write((string)$ack_message);
+            $this->sendAck($mData);
 
+            // message received
             $this->events->fire(new MessageReceivedEvent($mData));
         }
+    }
+
+    protected function sendAck($mData)
+    {
+        $packet = (new Packet())->setPipeline(Packet::XMPP_PIPELINE)->setPayload(new Payload())->setTo($mData->from);
+        $ack_message = new AckMessage($packet, $mData->message_id);
+        $this->write((string)$ack_message);
     }
 }

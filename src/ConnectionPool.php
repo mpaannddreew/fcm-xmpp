@@ -62,13 +62,10 @@ class ConnectionPool
     protected function initEvents(ConnectionInterface $connection)
     {
         $connection->on('data', function ($data) use ($connection) {
-            Log::info("===reading===");
-            Log::info($data);
             $this->parser->parseData($data, $connection);
         });
 
         $connection->on('close', function() use ($connection){
-            Log::info("===closed===");
             $this->storage->detach($connection);
         });
     }
