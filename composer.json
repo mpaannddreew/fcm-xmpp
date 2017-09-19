@@ -17,6 +17,7 @@
         "fannypack/utils": "^0.0.1",
         "react/socket-client": "^0.7.0",
         "illuminate/Contracts": "~5.4",
-        "illuminate/Support": "~5.4"
+        "illuminate/Support": "~5.4",
+        "illuminate/Events": "~5.4"
     }
 }

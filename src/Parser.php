@@ -10,11 +10,16 @@ namespace FannyPack\Fcm\Xmpp;
 
 
 use DOMElement;
-use FannyPack\Utils\Fcm\Events\ConnectionDrainageEvent;
-use FannyPack\Utils\Fcm\Events\MessageAcknowledgementEvent;
-use FannyPack\Utils\Fcm\Events\MessageReceivedEvent;
-use FannyPack\Utils\Fcm\Events\RegistrationErrorEvent;
-use FannyPack\Utils\Fcm\Events\RegistrationExpiryEvent;
+use FannyPack\Utils\Fcm\Events\AbstractError;
+use FannyPack\Utils\Fcm\Events\ConnectionDrainage;
+use FannyPack\Utils\Fcm\Events\DeviceMessageRateExceeded;
+use FannyPack\Utils\Fcm\Events\InvalidJson;
+use FannyPack\Utils\Fcm\Events\MessageAcknowledged;
+use FannyPack\Utils\Fcm\Events\MessageReceiptReceived;
+use FannyPack\Utils\Fcm\Events\MessageReceived;
+use FannyPack\Utils\Fcm\Events\NewConnectionEstablished;
+use FannyPack\Utils\Fcm\Events\InvalidDeviceRegistration;
+use FannyPack\Utils\Fcm\Events\RegistrationExpired;
 use FannyPack\Utils\Fcm\Messages\AckMessage;
 use FannyPack\Utils\Fcm\Messages\Payload;
 use FannyPack\Utils\Fcm\Packet;
@@ -78,9 +83,9 @@ class Parser
             }
             elseif ($node->localName == 'failure') {} // todo failure response
             elseif ($node->localName == 'iq' && $node->getAttribute('type') == 'result'){
-                Log::info("connected");
+                // new connection successfully established
                 $jid = $node->firstChild->firstChild->textContent;
-                Log::info($jid);
+                $this->events->fire(new NewConnectionEstablished($jid));
             }
             elseif ($node->localName == 'message') {
                 $this->parseMessage($node);
@@ -148,34 +153,51 @@ class Parser
         }elseif ($node->firstChild->localName == 'gcm' && ($json = $node->firstChild->textContent) && ($data = json_decode($json)) && @$data->message_type && @$data->message_id) {
             if ($data->message_type == 'ack') {
                 // message acknowledgement received
-                $this->events->fire(new MessageAcknowledgementEvent($data->message_id));
+                $this->events->fire(new MessageAcknowledged($data->message_id));
             } elseif ($data->message_type == 'nack') {
-                Log::info("===nack===");
-                Log::info("$data->error ($data->error_description) $data->from");
-                if ($data->error == 'BAD_REGISTRATION' || $data->error == 'DEVICE_UNREGISTERED')
+                switch (strtolower($data->error))
                 {
-                    // unregistered/uninstalled app
-                    $this->events->fire(new RegistrationErrorEvent($data->from));
+                    case 'bad_registration':
+                        // unregistered/uninstalled app
+                        $this->events->fire(new InvalidDeviceRegistration($data->from));
+                        break;
+                    case 'device_unregistered':
+                        // unregistered/uninstalled app
+                        $this->events->fire(new InvalidDeviceRegistration($data->from));
+                        break;
+                    case 'device_message_rate_exceeded':
+                        // device rate exceeded
+                        $this->events->fire(new DeviceMessageRateExceeded($data->from));
+                        break;
+                    case 'invalid_json':
+                        // invalid json
+                        $this->events->fire(new InvalidJson($data->from, $data->description));
+                        break;
+                    default:
+                        // unknown error
+                        $this->events->fire(new AbstractError($data->error, $data->from, $data->description));
+                        break;
                 }
-                else
-                {}// todo @call_user_func($this->onFail, $data->message_id, $data->error, $data->error_description);
             }
 
             if ($data->message_type == 'control' && $data->control_type == 'CONNECTION_DRAINING') {
                 // connection server connection drainage
-                $this->events->fire(new ConnectionDrainageEvent($data));
+                $this->events->fire(new ConnectionDrainage());
+            }elseif ($data->message_type == 'receipt')
+            {
+                // message receipt
+                $this->events->fire(new MessageReceiptReceived($data));
             }
-
             if (@$data->registration_id) {
                 // registration expired for token
-                $this->events->fire(new RegistrationExpiryEvent($data->from, $data->registration_id));
+                $this->events->fire(new RegistrationExpired($data->from, $data->registration_id));
             }
         } elseif (($json = $node->firstChild->textContent) && ($mData = json_decode($json)) && ($client_token = $mData->from) && ($client_message = $mData->data)) {
             // ack for receipt before processing message
             $this->sendAck($mData);
 
             // message received
-            $this->events->fire(new MessageReceivedEvent($mData));
+            $this->events->fire(new MessageReceived($mData));
         }
     }
 
