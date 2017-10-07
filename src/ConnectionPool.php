@@ -31,6 +31,11 @@ class ConnectionPool
     protected $parser;
 
     /**
+     * @var Config
+     */
+    protected $config;
+
+    /**
      * ConnectionPool constructor.
      * @param Application $app
      */
@@ -39,6 +44,7 @@ class ConnectionPool
         $this->app = $app;
         $this->storage = $this->app[ConnectionStorage::class];
         $this->parser = $this->app[Parser::class];
+        $this->config = $this->app[Config::class];
     }
 
     /**
@@ -48,7 +54,7 @@ class ConnectionPool
      */
     public function add(ConnectionInterface $connection)
     {
-        $connection->write('<stream:stream to="' . Config::HOST_DOMAIN . '" version="1.0" xmlns="jabber:client" xmlns:stream="http://etherx.jabber.org/streams">');
+        $connection->write('<stream:stream to="' . $this->config->getHostDomain() . '" version="1.0" xmlns="jabber:client" xmlns:stream="http://etherx.jabber.org/streams">');
 
         $this->initEvents($connection);
         $this->storage->attach($connection, ['position' => $this->storage->count() + 1]);
@@ -62,6 +68,8 @@ class ConnectionPool
     protected function initEvents(ConnectionInterface $connection)
     {
         $connection->on('data', function ($data) use ($connection) {
+            Log::info("---reading---");
+            Log::info($data);
             $this->parser->parseData($data, $connection);
         });
 

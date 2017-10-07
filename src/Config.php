@@ -22,11 +22,16 @@ class Config
      * @var $senderId
      */
     protected $senderId;
-    
 
-    CONST HOST_IP = "74.125.133.188";
+    /**
+     * @var string
+     */
+    protected $host_ip = "74.125.133.188";
 
-    CONST HOST_DOMAIN = "fcm-xmpp.googleapis.com";
+    /**
+     * @var string
+     */
+    protected $host_domain = "fcm-xmpp.googleapis.com";
 
     /**
      * @var $port
@@ -77,6 +82,9 @@ class Config
 
         if (!$this->port)
             throw new \InvalidArgumentException("FCM Xmpp Port not specified");
+
+        if (!$this->timeout)
+            $this->timeout = 60.0;
     }
 
     /**
@@ -133,5 +141,21 @@ class Config
     public function setContext($context)
     {
         $this->context = $context;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHostIp()
+    {
+        return $this->host_ip;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHostDomain()
+    {
+        return $this->host_domain;
     }
 }

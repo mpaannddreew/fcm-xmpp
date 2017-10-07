@@ -2,6 +2,7 @@
 
 namespace FannyPack\Fcm\Xmpp\Commands;
 
+use FannyPack\Fcm\Xmpp\Config;
 use FannyPack\Fcm\Xmpp\XmppClient;
 use Illuminate\Console\Command;
 
@@ -27,14 +28,21 @@ class StreamFcm extends Command
     protected $client;
 
     /**
+     * @var Config
+     */
+    protected $config;
+
+    /**
      * Create a new command instance.
      * @param XmppClient $client
+     * @param Config $config
      */
-    public function __construct(XmppClient $client)
+    public function __construct(XmppClient $client, Config $config)
     {
         parent::__construct();
 
         $this->client = $client;
+        $this->config = $config;
     }
 
     /**
@@ -44,7 +52,7 @@ class StreamFcm extends Command
      */
     public function handle()
     {
-        $this->line("<info>Streaming FCM XMPP Connection server</info>");
+        $this->line("<info>Streaming FCM XMPP Connection server:</info> <tls://{$this->config->getHostIp()}:{$this->config->getPort()}>");
         $this->client->connect();
         return;
     }

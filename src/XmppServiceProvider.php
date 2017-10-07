@@ -40,7 +40,7 @@ class XmppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(Config::class, function($app){
+        $this->app->bind(Config::class, function($app){
             return new Config($app);
         });
 

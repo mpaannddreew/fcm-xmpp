@@ -117,7 +117,7 @@ class XmppClient
      */
     public function connect()
     {
-        $this->timeoutConnector->connect(Config::HOST_IP . ':' . $this->config->getPort())->then(
+        $this->timeoutConnector->connect($this->config->getHostIp() . ':' . $this->config->getPort())->then(
             function (ConnectionInterface $connection) {
                 $this->pool->add($connection);
             },
