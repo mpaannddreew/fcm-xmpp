@@ -26,10 +26,6 @@ class XmppServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__ . '/config/fcmxmpp.php' => config_path('fcmxmpp.php'),
             ], 'fcm-xmpp-config');
-            
-            $this->commands([
-                StreamFcm::class
-            ]);
         }
     }
 
