@@ -68,22 +68,27 @@ class Config
      */
     protected function setConfigs()
     {
-        $this->apiKey = $this->app['config']['fcmxmpp.apiKey'];
-        $this->senderId = $this->app['config']['fcmxmpp.senderId'];
-        $this->port = $this->app['config']['fcmxmpp.port'];
-        $this->context = $this->app["config"]["fcmxmpp.context"];
-        $this->timeout = $this->app["config"]["fcmxmpp.timeout"];
+        $apiKey = $this->app['config']['fcmxmpp.apiKey'];
+        $senderId = $this->app['config']['fcmxmpp.senderId'];
+        $port = $this->app['config']['fcmxmpp.port'];
+        $context = $this->app["config"]["fcmxmpp.context"];
+        $timeout = $this->app["config"]["fcmxmpp.timeout"];
 
-        if (!$this->apiKey)
+        if (!$apiKey)
             throw new \InvalidArgumentException("FCM Server key not specified");
 
-        if (!$this->senderId)
+        if (!$senderId)
             throw new \InvalidArgumentException("FCM Sender Id not specified");
 
-        if (!$this->port)
+        if (!$port)
             throw new \InvalidArgumentException("FCM Xmpp Port not specified");
 
-        if (!$this->timeout)
+        $this->apiKey = $apiKey;
+        $this->senderId = $senderId;
+        $this->port = $port;
+        $this->context = $context;
+
+        if (!$timeout)
             $this->timeout = 60.0;
     }
 
