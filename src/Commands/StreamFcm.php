@@ -34,15 +34,14 @@ class StreamFcm extends Command
 
     /**
      * Create a new command instance.
-     * @param XmppClient $client
-     * @param Config $config
+     *
      */
-    public function __construct(XmppClient $client, Config $config)
+    public function __construct()
     {
         parent::__construct();
 
-        $this->client = $client;
-        $this->config = $config;
+        $this->client = $this->laravel[Config::class];
+        $this->config = $this->laravel[XmppClient::class];
     }
 
     /**
