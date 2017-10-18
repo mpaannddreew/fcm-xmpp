@@ -198,7 +198,7 @@ class Parser
                             break;
                         case 'device_message_rate_exceeded':
                             // device rate exceeded
-                            $this->events->fire(new DeviceMessageRateExceeded($data->from));
+                            $this->events->fire(new DeviceMessageRateExceeded($data->from, null, $data->message_id));
                             break;
                         case 'invalid_json':
                             // invalid json
