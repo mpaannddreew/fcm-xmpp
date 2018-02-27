@@ -36,11 +36,11 @@ class XmppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(Config::class, function($app){
-            return new Config($app);
+        $this->app->bind(XmppConfig::class, function($app){
+            return new XmppConfig($app);
         });
 
-        $this->app->when(Parser::class)
+        $this->app->when(XmppParser::class)
             ->needs(DOMDocument::class)
             ->give(function (){
                 $xml = new DOMDocument();
@@ -48,12 +48,12 @@ class XmppServiceProvider extends ServiceProvider
                 return $xml;
             });
 
-        $this->app->singleton(ConnectionStorage::class, function($app){
-            return new ConnectionStorage();
+        $this->app->singleton(XmppConnectionStorage::class, function($app){
+            return new XmppConnectionStorage();
         });
 
-        $this->app->singleton(ConnectionPool::class, function($app){
-            return new ConnectionPool($app);
+        $this->app->singleton(XmppConnectionPool::class, function($app){
+            return new XmppConnectionPool($app);
         });
 
         $this->app->singleton(XmppClient::class, function($app){

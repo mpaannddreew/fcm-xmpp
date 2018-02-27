@@ -11,7 +11,7 @@ namespace FannyPack\Fcm\Xmpp;
 
 use Illuminate\Contracts\Foundation\Application;
 
-class Config
+class XmppConfig
 {
     /**
      * @var $apiKey

@@ -53,12 +53,12 @@ class XmppClient
     protected $timeoutConnector;
 
     /**
-     * @var ConnectionPool
+     * @var XmppConnectionPool
      */
     protected $pool;
 
     /**
-     * @var Config
+     * @var XmppConfig
      */
     protected $config;
 
@@ -69,8 +69,8 @@ class XmppClient
     public function __construct(Application $app)
     {
         $this->app = $app;
-        $this->pool = $this->app[ConnectionPool::class];
-        $this->config = $this->app[Config::class];
+        $this->pool = $this->app[XmppConnectionPool::class];
+        $this->config = $this->app[XmppConfig::class];
         $this->loop = Factory::create();
         $this->configureTcpIpConnector();
         $this->configureDnsConnector();

@@ -13,7 +13,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Log;
 use React\Socket\ConnectionInterface;
 
-class ConnectionPool
+class XmppConnectionPool
 {
     /**
      * @var Application
@@ -21,17 +21,17 @@ class ConnectionPool
     protected $app;
 
     /**
-     * @var ConnectionStorage
+     * @var XmppConnectionStorage
      */
     protected $storage;
 
     /**
-     * @var Parser
+     * @var XmppParser
      */
     protected $parser;
 
     /**
-     * @var Config
+     * @var XmppConfig
      */
     protected $config;
 
@@ -42,9 +42,9 @@ class ConnectionPool
     public function __construct(Application $app)
     {
         $this->app = $app;
-        $this->storage = $this->app[ConnectionStorage::class];
-        $this->parser = $this->app[Parser::class];
-        $this->config = $this->app[Config::class];
+        $this->storage = $this->app[XmppConnectionStorage::class];
+        $this->parser = $this->app[XmppParser::class];
+        $this->config = $this->app[XmppConfig::class];
     }
 
     /**
@@ -74,6 +74,7 @@ class ConnectionPool
         });
 
         $connection->on('close', function() use ($connection){
+            Log::info("---closing---");
             $this->storage->detach($connection);
         });
     }

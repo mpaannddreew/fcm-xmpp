@@ -11,7 +11,7 @@ namespace FannyPack\Fcm\Xmpp;
 
 use SplObjectStorage;
 
-class ConnectionStorage extends SplObjectStorage
+class XmppConnectionStorage extends SplObjectStorage
 {
     /**
      * return latest connection in storage

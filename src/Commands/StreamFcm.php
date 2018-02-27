@@ -2,7 +2,7 @@
 
 namespace FannyPack\Fcm\Xmpp\Commands;
 
-use FannyPack\Fcm\Xmpp\Config;
+use FannyPack\Fcm\Xmpp\XmppConfig;
 use FannyPack\Fcm\Xmpp\XmppClient;
 use Illuminate\Console\Command;
 
@@ -28,16 +28,16 @@ class StreamFcm extends Command
     protected $client;
 
     /**
-     * @var Config
+     * @var XmppConfig
      */
     protected $config;
 
     /**
      * Create a new command instance.
      * @param XmppClient $client
-     * @param Config $config
+     * @param XmppConfig $config
      */
-    public function __construct(XmppClient $client, Config $config)
+    public function __construct(XmppClient $client, XmppConfig $config)
     {
         parent::__construct();
 

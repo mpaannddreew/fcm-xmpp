@@ -21,15 +21,14 @@ use FannyPack\Utils\Fcm\Events\NewConnectionEstablished;
 use FannyPack\Utils\Fcm\Events\InvalidDeviceRegistration;
 use FannyPack\Utils\Fcm\Events\RegistrationExpired;
 use FannyPack\Utils\Fcm\Messages\AckMessage;
-use FannyPack\Utils\Fcm\Messages\Payload;
-use FannyPack\Utils\Fcm\Packet;
 use DOMDocument;
+use FannyPack\Utils\Fcm\XmppPacket;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Support\Facades\Log;
 use React\Socket\ConnectionInterface;
 
-class Parser
+class XmppParser
 {
     /**
      * @var DOMDocument
@@ -37,7 +36,7 @@ class Parser
     protected $document;
 
     /**
-     * @var Config
+     * @var XmppConfig
      */
     protected $config;
 
@@ -75,7 +74,7 @@ class Parser
     {
         $this->document = $document;
         $this->app = $app;
-        $this->config = $this->app[Config::class];
+        $this->config = $this->app[XmppConfig::class];
         $this->events = $this->app['events'];
     }
 
@@ -250,9 +249,7 @@ class Parser
      */
     protected function sendAck($message_id, $registration_id)
     {
-        $packet = (new Packet())
-            ->setPipeline(Packet::XMPP_PIPELINE)
-            ->setTo($registration_id);
+        $packet = (new XmppPacket())->setTo($registration_id);
 
         $ack_message = new AckMessage($packet, $message_id);
         $this->write((string)$ack_message);
