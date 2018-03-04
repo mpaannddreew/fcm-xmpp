@@ -122,7 +122,7 @@ class XmppClient
                 $this->pool->add($connection);
             },
             function (Exception $error) {
-                Log::info($error->getMessage());
+                Log::info($error);
                 $this->reConnect();
             }
         );

@@ -9,6 +9,7 @@
 namespace FannyPack\Fcm\Xmpp;
 
 
+use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Log;
 use React\Socket\ConnectionInterface;
@@ -68,14 +69,22 @@ class XmppConnectionPool
     protected function initEvents(ConnectionInterface $connection)
     {
         $connection->on('data', function ($data) use ($connection) {
-            Log::info("---reading---");
-            Log::info($data);
-            $this->parser->parseData($data, $connection);
+            try {
+                Log::info("---reading---");
+                Log::info($data);
+                $this->parser->parseData($data, $connection);
+            } catch (Exception $e) {
+                Log::info($e);
+            }
         });
 
         $connection->on('close', function() use ($connection){
-            Log::info("---closing---");
-            $this->storage->detach($connection);
+            try {
+                Log::info("---closing---");
+                $this->storage->detach($connection);
+            } catch (Exception $e) {
+                Log::info($e);
+            }
         });
     }
 }

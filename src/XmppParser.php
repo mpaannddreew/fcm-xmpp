@@ -172,8 +172,9 @@ class XmppParser
             {
                 if ($_node->localName == 'error')
                 {
+                    // todo handle error response
                     Log::info("===error===");
-                    Log::error($_node->textContent); // todo handle error response
+                    Log::error($_node->textContent);
                 }
             }
         }elseif ($node->firstChild->localName == 'gcm' && ($json = $node->firstChild->textContent) && ($data = json_decode($json)) && @$data->message_type && @$data->message_id) {
@@ -221,7 +222,7 @@ class XmppParser
                     $this->sendAck($data->message_id, $data->data->device_registration_id);
 
                     // message receipt
-                    $this->events->fire(new MessageReceiptReceived($data));
+                    $this->events->fire(new MessageReceiptReceived((array)$data));
                     break;
                 default:
                     break;
@@ -237,7 +238,7 @@ class XmppParser
             $this->sendAck($mData->message_id, $mData->from);
 
             // message received
-            $this->events->fire(new MessageReceived($mData));
+            $this->events->fire(new MessageReceived((array)$mData));
         }
     }
 
