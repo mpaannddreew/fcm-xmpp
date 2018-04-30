@@ -238,7 +238,7 @@ class XmppParser
             $this->sendAck($mData->message_id, $mData->from);
 
             // message received
-            $this->events->fire(new MessageReceived((array)$mData));
+            $this->events->fire(new MessageReceived((array)$mData, 'xmpp'));
         }
     }
 
